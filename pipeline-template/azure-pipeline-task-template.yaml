@@ -1,0 +1,18 @@
+steps:
+- task: CmdLine@2
+  inputs:
+    script: |
+      docker login butloo.azurecr.io --username butloo --password zE25XUSbUbRdj2K9vLcsfMhxkfSPeElm6P472YqekA+ACRC3Sky4
+      docker build -t butloo.azurecr.io/dotnet:$(env)-$(Build.BuildId) .
+      docker push butloo.azurecr.io/dotnet:$(env)-$(Build.BuildId)
+      docker rmi butloo.azurecr.io/dotnet:$(env)-$(Build.BuildId)
+
+# steps:
+# - task: Docker@2
+#   displayName: Docker Build & Push
+#   inputs:
+#     containerRegistry: 'abitha'
+#     repository: 'dotnet'
+#     command: 'buildAndPush'
+#     Dockerfile: '**/Dockerfile'
+#     tags: '$(env)-$(Build.BuildId)'

@@ -1,0 +1,36 @@
+steps:
+- task: replacetokens@5
+  inputs:
+    rootDirectory: '$(Agent.BuildDirectory)'
+    targetFiles: '**/*.yaml'
+    encoding: 'auto'
+    tokenPattern: 'custom'
+    tokenPrefix: '{__'
+    tokenSuffix: '__}'
+    writeBOM: true
+    actionOnMissing: 'warn'
+    keepToken: false
+    actionOnNoFiles: 'continue'
+    enableTransforms: false
+    enableRecursion: false
+    useLegacyPattern: false
+    enableTelemetry: true
+
+- task: CmdLine@2
+  inputs:
+    script: |
+      cd devops
+      # D:\Softwares\helm-v3.11.0-rc.1-windows-amd64\windows-amd64\helm.exe package dotnet
+      helm package dotnet
+      helm push dotnet-0.$(tag).0.tgz oci://butloo.azurecr.io/
+      kubectl apply -f argocd-application-$(namespace).yaml
+
+# - task: Bash@3
+#   inputs:
+#     targetType: 'inline'
+#     script: |
+#       cd devops
+#       helm package dotnet
+#       # mv logicapp-0.$(tag).0.tgz logicapp-$(env)-0.$(tag).0.tgz
+#       helm push dotnet-0.$(tag).0.tgz oci://090963996862.dkr.ecr.us-east-1.amazonaws.com/dotnet-$(namespace)
+#       # kubectl apply -f argocd-application-$(namespace).yaml

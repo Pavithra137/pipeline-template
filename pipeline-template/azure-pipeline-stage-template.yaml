@@ -1,0 +1,18 @@
+stages:
+- stage: DEV
+  condition: eq(variables['build.SourceBranchName'], 'dev')
+  variables:
+  - group: dev
+  jobs:
+  - job: DEV
+    steps:
+    - template: azure-pipeline-task-template.yaml@pipeline-template
+
+- stage: QA
+  condition: contains(variables['build.SourceBranch'], 'release')
+  variables:
+  - group: qa
+  jobs:
+  - job: QA
+    steps:
+    - template: azure-pipeline-task-template.yaml@pipeline-template
